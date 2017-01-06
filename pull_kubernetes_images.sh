@@ -21,8 +21,8 @@ docker tag zhaoyihui/kubedns-amd64                          gcr.io/google_contai
 docker tag zhaoyihui/kube-proxy-amd64                       gcr.io/google_containers/kube-proxy-amd64:v1.5.1
 docker tag zhaoyihui/dnsmasq-metrics-amd64                  gcr.io/google_containers/dnsmasq-metrics-amd64:1.0
 docker tag zhaoyihui/kubernetes-dashboard-amd64             gcr.io/google_containers/kubernetes-dashboard-amd64:v1.5.0
-docker tag zhaoyihui/weave-kube                             gcr.io/google_containers/weave-kube:1.8.1
-docker tag zhaoyihui/weave-npc                              gcr.io/google_containers/weave-npc:1.8.1
+docker tag zhaoyihui/weave-kube                             weaveworks/weave-kube:1.8.1
+docker tag zhaoyihui/weave-npc                              weaveworks/weave-npc:1.8.1
 
 
 for ImageName in kube-discovery-amd64 kube-scheduler-amd64 kube-controller-manager-amd64 kube-dnsmasq-amd64 etcd-amd64 pause-amd64 exechealthz-amd64 kube-apiserver-amd64 kubedns-amd64 kube-proxy-amd64 dnsmasq-metrics-amd64 kubernetes-dashboard-amd64 weave-kube weave-npc
