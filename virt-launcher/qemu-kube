@@ -1,0 +1,78 @@
+#!/bin/sh
+alias docker="sudo /usr/bin/docker"
+
+ARGS="$@"
+# static config
+if [ -r "/etc/vdsm/qemu_kube.conf" ]; then
+    source "/etc/vdsm/qemu_kube.conf"
+fi
+# runtime config
+# TODO: let Makefile fill this
+# source "/var/run/vdsm/qemu_kube.conf"
+
+if [ -z "$QEMU" ]; then
+    QEMU="/usr/bin/qemu-system-x86_64"
+fi
+if [ -z "$LOG" ]; then
+    LOG="/var/log/kubevirt/qemu-kube.log"
+fi
+if [ ! -w "$LOG" ]; then
+    LOG="/dev/null"
+fi
+
+# All namespaces a docker container uses:
+#CGROUPS='freezer,cpu,cpuacct,perf_event,net_cls,blkio,devices,memory,hugetlb,cpuset'
+CGROUPS='freezer,cpu,cpuacct,perf_event,net_cls,blkio,memory,hugetlb,cpuset' # don't use devices namespace
+
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -name)
+        VM_NAME="$2"
+        shift
+    ;;
+    *)
+    ;;
+esac
+shift
+done
+
+if [ -z "$VM_NAME" ]; then
+    exec $QEMU $ARGS
+fi
+
+if [[ "$VM_NAME" == *"="* ]]
+then
+    VM_NAME=$(echo -n "$VM_NAME" | awk -F "=" -v RS="," "/guest/ { print \$2; }")
+fi
+
+function find_container() {
+    docker ps --no-trunc | awk "/.*compute.*virt-launcher-$VM_NAME-{5}.*/ { print \$1 }"
+}
+
+NEXT_WAIT=0
+until test -n "$(find_container)" || [ $NEXT_WAIT -eq 10 ]; do
+           (( NEXT_WAIT++ ))
+           sleep 6
+done
+
+CONTAINER_ID=$( find_container )
+
+if [ -z "$CONTAINER_ID" ]; then
+        >&2 echo "Could not find the VM container"
+        exit 1
+fi
+
+CONTAINER_PID=$(docker inspect --format '{{.State.Pid}}' $CONTAINER_ID)
+CMD="$QEMU $ARGS"
+
+date >> $LOG
+echo "$CMD" >> $LOG
+
+# Start qemu in the pid namespace of the container to receive signals on container kills
+# Don't close file descriptors bigger than 10000 to allow passing tap device fds
+# Start the qemu process in the cgroups of the docker container
+# to adher the resource limitations of the container.
+sudo -C 10000 bash -c -- "cgclassify -g ${CGROUPS}:system.slice/docker-$CONTAINER_ID.scope --sticky \$\$ && nsenter -t $CONTAINER_PID -p $CMD"
