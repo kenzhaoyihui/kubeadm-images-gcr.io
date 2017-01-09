@@ -15,7 +15,7 @@ docker tag zhaoyihui/kube-controller-manager-amd64          gcr.io/google_contai
 docker tag zhaoyihui/kube-dnsmasq-amd64                     gcr.io/google_containers/kube-dnsmasq-amd64:1.4
 docker tag zhaoyihui/etcd-amd64                             gcr.io/google_containers/etcd-amd64:3.0.14-kubeadm
 docker tag zhaoyihui/pause-amd64                            gcr.io/google_containers/pause-amd64:3.0
-docker tag zhaoyihui/exechealthz-amd64                      gcr.io/google_containers/exechealthz-amd64:v1.2.0
+docker tag zhaoyihui/exechealthz-amd64                      gcr.io/google_containers/exechealthz-amd64:1.2
 docker tag zhaoyihui/kube-apiserver-amd64                   gcr.io/google_containers/kube-apiserver-amd64:v1.5.1
 docker tag zhaoyihui/kubedns-amd64                          gcr.io/google_containers/kubedns-amd64:1.9
 docker tag zhaoyihui/kube-proxy-amd64                       gcr.io/google_containers/kube-proxy-amd64:v1.5.1
