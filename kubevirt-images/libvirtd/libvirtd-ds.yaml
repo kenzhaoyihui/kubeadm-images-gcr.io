@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    name: libvirtd
+  name: libvirtd
+spec:
+  template:
+    metadata:
+      labels:
+        name: libvirtd
+    spec:
+      hostNetwork: true
+      hostPID: true
+      hostIPC: true
+      securityContext:
+        runAsUser: 0
+      containers:
+        - name: libvirtd
+          image: kubevirt/libvirtd:latest
+          ports:
+            - containerPort: 16509
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          volumeMounts:
+            - mountPath: /host
+              name: host
+      volumes:
+        - name: host
+          hostPath:
+            path: /
