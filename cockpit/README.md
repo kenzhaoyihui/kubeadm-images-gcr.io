@@ -1,11 +1,5 @@
 # This is a demonstration of how KubeVirt could be displayed in Cockpit
 
-**Note:** This work is a Cockpit pod in _demo shape_ and _not_ for production use.
-
-Due to current limitations, this Cockpit instance is authenticating
-against the pod OS (root:), and not against Kubernetes.
-Also the wording on the machines page is "host" tuned.
-
 To try this pod with KubeVirt:
 
 1. `./cluster/kubectl.sh create -f manifests/cockpit.json`
